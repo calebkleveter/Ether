@@ -1,3 +1,8 @@
+## [2018.X.X]
+
+### Added
+- `--case` flag to the `test` command, to specify which test case to run.
+
 ## [2018.10.03]
 
 ### Added

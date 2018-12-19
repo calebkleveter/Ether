@@ -27,6 +27,12 @@ public final class Test: Command {
     public var arguments: [CommandArgument] = []
     
     public var options: [CommandOption] = [
+        CommandOption.value(name: "case", short: "c", help: [
+            "Specifies the test case to run. Valid values look like this:",
+            "- `EtherTests`",
+            "- `EtherTests.EtherTests`",
+            "- `EtherTests.EtherTests.testSomething"
+        ]),
         CommandOption.flag(name: "verbose", short: "v", help: ["Outputs raw stdout from `swift test`"]),
         CommandOption.flag(name: "release", short: "r", help: ["Runs tests in release mode"])
     ]
@@ -36,8 +42,19 @@ public final class Test: Command {
     public init() {}
     
     public func run(using context: CommandContext) throws -> EventLoopFuture<Void> {
+        var command = ["test"]
+        if let `case` = context.options["case"] {
+            let filters = `case`.split(separator: ".").map(String.init)
+            if filters.count < 3 {
+                command.append(contentsOf: ["--filter", `case`])
+            } else {
+                let filter = filters[0] + "." + filters[1] + "/" + filters[2]
+                command.append(contentsOf: ["--filter", filter])
+            }
+        }
+        
         let stdout = self.output()
-        let exit = Process.asyncExecute("swift", "test", on: context.container) { output in
+        let exit = Process.asyncExecute("swift", command, on: context.container) { output in
             switch output {
             case let .stdout(data): self.log(data, on: context, with: stdout)
             case let .stderr(data): self.log(data, on: context, with: stdout)

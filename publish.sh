@@ -1,7 +1,22 @@
+if brew gdate 2>/dev/null; then
+    echo "🍺 Updating Homebrew Formulae"
+    brew upgrade
+else
+    echo "Make sure you have the latest version of LibreSSL installed"
+
+    while true; do
+        read -p "Continue? [Y/n]" yn
+        case $yn in
+            [Yy]* ) break;;
+            [Nn]* ) exit;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
+fi
+
 echo "📦  Updating Swift packages..."
 swift package update
 swift package resolve
-
 
 echo "📦  Determining latest Git tag..."
 TAG=$(git describe --abbrev=0 --tags);
@@ -32,7 +47,7 @@ cp .build/release/Executable ./$PACKAGE_NAME/$EXEC_NAME
 tar -cvzf macOS-sierra.tar.gz ./$PACKAGE_NAME
 HASH=$(shasum -a 256 macOS-sierra.tar.gz | cut -d " " -f 1)
 
-echo "📦  Drag and drop $PWD/macOS-sierra.tar.gz into https://github.com/vapor/toolbox/releases/edit/$TAG"
+echo "📦  Drag and drop $PWD/macOS-sierra.tar.gz into https://github.com/Ether-CLI/Ether/releases/edit/$TAG"
 
 while true; do
     read -p "Have you finished uploading? [y/n]" yn

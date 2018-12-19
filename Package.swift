@@ -18,6 +18,7 @@ let package = Package(
     targets: [
         .target(name: "Helpers", dependencies: ["Core", "Console"]),
         .target(name: "Ether", dependencies: ["Vapor", "Helpers", "Console", "Command", "Manifest", "Core", "Xgen"]),
-        .target(name: "Executable", dependencies: ["Vapor", "Ether", "Console"])
+        .target(name: "Executable", dependencies: ["Vapor", "Ether", "Console"]),
+        .testTarget(name: "EtherTests", dependencies: ["Ether", "Executable"])
     ]
 )
